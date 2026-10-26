@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>Toreeeeees — スマホがトレース台になる</title>
+  <meta name="description" content="画像を読み込んでサイズを合わせ、画面を固定。スマホの上に紙をのせてそのままなぞれるトレース台アプリ。">
+  <meta name="theme-color" content="#16151a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Toreeeeees">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- SVG icon sprite -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="10" r="1.8" fill="currentColor"/><path d="M4 18l5-5 3.5 3.5L15 14l5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M8.2 10.5V8a3.8 3.8 0 017.6 0v2.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="15.5" r="1.4" fill="currentColor"/></symbol>
+      <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V5.5A1.5 1.5 0 015.5 4H9M15 4h3.5A1.5 1.5 0 0120 5.5V9M20 15v3.5a1.5 1.5 0 01-1.5 1.5H15M9 20H5.5A1.5 1.5 0 014 18.5V15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+      <symbol id="i-width" viewBox="0 0 24 24"><path d="M3.5 12h17M7 8.5L3.5 12 7 15.5M17 8.5l3.5 3.5-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-rotate" viewBox="0 0 24 24"><path d="M20 11a8 8 0 10-2.3 5.7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M20 4.5V11h-6.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-flip-h" viewBox="0 0 24 24"><path d="M12 3v18" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 2.4"/><path d="M9 6L3.5 17.5H9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15 6l5.5 11.5H15z" fill="currentColor" fill-opacity=".35" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+      <symbol id="i-flip-v" viewBox="0 0 24 24"><g transform="rotate(90 12 12)"><path d="M12 3v18" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 2.4"/><path d="M9 6L3.5 17.5H9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15 6l5.5 11.5H15z" fill="currentColor" fill-opacity=".35" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></g></symbol>
+      <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 12a8 8 0 102.3-5.7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M4 4.5V10h5.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-ruler" viewBox="0 0 24 24"><rect x="2.5" y="8" width="19" height="8" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M6.5 8v3M10 8v4.5M13.5 8v3M17 8v4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+      <symbol id="i-chev" viewBox="0 0 24 24"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+      <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20l1.2-4.6L15.8 4.8a2 2 0 012.8 0l.6.6a2 2 0 010 2.8L8.6 18.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.8 6.8l3.4 3.4" stroke="currentColor" stroke-width="1.8"/></symbol>
+      <symbol id="i-hand" viewBox="0 0 24 24"><path d="M8 12V5.5a1.5 1.5 0 013 0V11m0-6.5a1.5 1.5 0 013 0V11m0-5a1.5 1.5 0 013 0v7.5c0 4-2.6 7-6.5 7-2.6 0-4.2-1.3-5.6-3.3L3.3 14a1.6 1.6 0 012.5-2L8 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- ============ Welcome ============ -->
+  <section id="welcome" class="welcome" aria-labelledby="brand">
+    <div class="welcome__paper" aria-hidden="true"></div>
+    <div class="welcome__inner">
+      <header class="brand">
+        <div class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64"><rect x="6" y="10" width="40" height="48" rx="7" fill="#fffaf2" stroke="#16151a" stroke-width="3.5"/><rect x="18" y="5" width="40" height="48" rx="7" fill="#ff8a5b" stroke="#16151a" stroke-width="3.5" opacity=".95"/><path d="M27 37c4-9 8 2 12-6s7 3 10-2" fill="none" stroke="#16151a" stroke-width="3.5" stroke-linecap="round"/></svg>
+        </div>
+        <h1 id="brand" class="brand__name">Tor<span class="brand__e">eeeee</span>s</h1>
+        <p class="brand__tag">スマホが、トレース台になる。</p>
+      </header>
+
+      <label class="drop" id="drop" for="file">
+        <input id="file" type="file" accept="image/*" hidden>
+        <span class="drop__icon"><svg><use href="#i-image"/></svg></span>
+        <span class="drop__title">画像をえらぶ</span>
+        <span class="drop__sub">タップして選択 ・ ドロップ ・ 貼り付けもOK</span>
+      </label>
+
+      <button id="resume" class="resume" type="button" hidden>
+        <img id="resumeThumb" alt="">
+        <span class="resume__txt"><b>前回のつづき</b><small>同じ位置・サイズで再開</small></span>
+        <svg class="resume__go"><use href="#i-play"/></svg>
+      </button>
+
+      <ol class="steps">
+        <li><span class="steps__n">1</span><svg><use href="#i-hand"/></svg><b>合わせる</b><small>ピンチで拡大<br>ドラッグで移動</small></li>
+        <li><span class="steps__n">2</span><svg><use href="#i-lock"/></svg><b>固定する</b><small>画面に触れても<br>絵はもう動かない</small></li>
+        <li><span class="steps__n">3</span><svg><use href="#i-pencil"/></svg><b>なぞる</b><small>紙をのせて<br>やさしくトレース</small></li>
+      </ol>
+
+      <p class="welcome__note">画像は端末の中だけで処理され、どこにも送信されません。</p>
+    </div>
+  </section>
+
+  <!-- ============ Stage ============ -->
+  <main id="stage" class="stage" data-bg="white" hidden>
+    <img id="art" class="art" alt="" draggable="false">
+    <div id="grid" class="grid" data-grid="off" aria-hidden="true"></div>
+  </main>
+
+  <!-- top bar -->
+  <header id="topbar" class="topbar ui" hidden>
+    <button class="chip" id="btnNew" type="button"><svg><use href="#i-image"/></svg><span>画像</span></button>
+    <div class="readout" id="readout" aria-live="polite"><span id="roScale">100%</span><i></i><span id="roRot">0°</span><i class="ro-mm" hidden></i><span id="roMm" class="ro-mm" hidden></span></div>
+    <button class="chip chip--icon" id="btnReset" type="button" aria-label="位置をリセット"><svg><use href="#i-reset"/></svg></button>
+  </header>
+
+  <!-- bottom panel -->
+  <section id="panel" class="panel ui" hidden>
+    <button class="panel__grab" id="panelToggle" type="button" aria-label="パネルを開閉"><i></i></button>
+
+    <nav class="tabs" role="tablist">
+      <button role="tab" class="tab is-on" data-tab="size" aria-selected="true">サイズ</button>
+      <button role="tab" class="tab" data-tab="look" aria-selected="false">見え方</button>
+      <button role="tab" class="tab" data-tab="guide" aria-selected="false">ガイド</button>
+      <span class="tabs__ink" aria-hidden="true"></span>
+    </nav>
+
+    <div class="panes">
+      <!-- size -->
+      <div class="pane is-on" data-pane="size" role="tabpanel">
+        <div class="row">
+          <label class="field">
+            <span class="field__head"><span>大きさ</span><output id="oScale">100%</output></span>
+            <input type="range" id="rScale" min="0" max="1000" step="1">
+          </label>
+        </div>
+        <div class="row">
+          <label class="field">
+            <span class="field__head"><span>角度</span><output id="oRot">0°</output></span>
+            <input type="range" id="rRot" min="-180" max="180" step="0.5" value="0">
+          </label>
+        </div>
+        <div class="tools">
+          <button class="tool" id="tFit" type="button"><svg><use href="#i-fit"/></svg><span>全体</span></button>
+          <button class="tool" id="tFitW" type="button"><svg><use href="#i-width"/></svg><span>横幅</span></button>
+          <button class="tool" id="tRot90" type="button"><svg><use href="#i-rotate"/></svg><span>90°</span></button>
+          <button class="tool" id="tFlipH" type="button" aria-pressed="false"><svg><use href="#i-flip-h"/></svg><span>左右</span></button>
+          <button class="tool" id="tFlipV" type="button" aria-pressed="false"><svg><use href="#i-flip-v"/></svg><span>上下</span></button>
+        </div>
+        <div class="mm">
+          <div class="mm__inputs" id="mmInputs">
+            <label class="num"><span>幅</span><input id="mmW" type="number" inputmode="decimal" min="1" step="0.5"><em>mm</em></label>
+            <span class="mm__x">×</span>
+            <label class="num"><span>高さ</span><input id="mmH" type="number" inputmode="decimal" min="1" step="0.5"><em>mm</em></label>
+          </div>
+          <button class="link" id="btnCalib" type="button"><svg><use href="#i-ruler"/></svg><span id="calibLabel">実寸で合わせる（画面を校正）</span></button>
+        </div>
+        <label class="switch"><input type="checkbox" id="sTwist" checked><span class="switch__ui"></span><span>2本指で回転する</span></label>
+      </div>
+
+      <!-- look -->
+      <div class="pane" data-pane="look" role="tabpanel" hidden>
+        <div class="toggles">
+          <label class="pill"><input type="checkbox" id="sGray"><span>白黒</span></label>
+          <label class="pill"><input type="checkbox" id="sInvert"><span>ネガ反転</span></label>
+          <label class="pill"><input type="checkbox" id="sLine"><span>線をくっきり</span></label>
+        </div>
+        <label class="field">
+          <span class="field__head"><span>コントラスト</span><output id="oContrast">100%</output></span>
+          <input type="range" id="rContrast" min="30" max="300" step="1" value="100">
+        </label>
+        <label class="field">
+          <span class="field__head"><span>明るさ</span><output id="oBright">100%</output></span>
+          <input type="range" id="rBright" min="30" max="200" step="1" value="100">
+        </label>
+        <label class="field">
+          <span class="field__head"><span>うすさ</span><output id="oOpacity">100%</output></span>
+          <input type="range" id="rOpacity" min="10" max="100" step="1" value="100">
+        </label>
+        <div class="seg-row">
+          <span class="seg-label">背景</span>
+          <div class="seg" id="segBg">
+            <button type="button" data-v="white" class="is-on">白</button>
+            <button type="button" data-v="gray">グレー</button>
+            <button type="button" data-v="black">黒</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- guide -->
+      <div class="pane" data-pane="guide" role="tabpanel" hidden>
+        <div class="seg-row">
+          <span class="seg-label">グリッド</span>
+          <div class="seg" id="segGrid">
+            <button type="button" data-v="off" class="is-on">なし</button>
+            <button type="button" data-v="coarse">あらく</button>
+            <button type="button" data-v="fine">こまかく</button>
+          </div>
+        </div>
+        <p class="hint" id="gridHint">校正すると 1マス = 10mm / 5mm になります。</p>
+        <div class="seg-row">
+          <span class="seg-label">ガイドの色</span>
+          <div class="swatches" id="swGrid">
+            <button type="button" data-v="#ff5a5a" style="--c:#ff5a5a" class="is-on" aria-label="赤"></button>
+            <button type="button" data-v="#2f7bff" style="--c:#2f7bff" aria-label="青"></button>
+            <button type="button" data-v="#18b26b" style="--c:#18b26b" aria-label="緑"></button>
+            <button type="button" data-v="#9a9a9a" style="--c:#9a9a9a" aria-label="グレー"></button>
+          </div>
+        </div>
+        <label class="switch"><input type="checkbox" id="sCross"><span class="switch__ui"></span><span>中心線を表示</span></label>
+        <div class="seg-row">
+          <span class="seg-label">解除ボタンの位置</span>
+          <div class="seg" id="segCorner">
+            <button type="button" data-v="tl">左上</button>
+            <button type="button" data-v="tr">右上</button>
+            <button type="button" data-v="bl">左下</button>
+            <button type="button" data-v="br" class="is-on">右下</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="cta" id="btnLock" type="button">
+      <span class="cta__icon"><svg><use href="#i-lock"/></svg></span>
+      <span class="cta__txt"><b>固定してトレース開始</b><small>画面を触っても動かなくなります</small></span>
+    </button>
+  </section>
+
+  <!-- gesture hint -->
+  <div id="coach" class="coach" hidden>
+    <div class="coach__card">
+      <div class="coach__anim" aria-hidden="true"><i></i><i></i></div>
+      <p><b>ピンチで拡大・回転</b><br>1本指ドラッグで移動できます</p>
+    </div>
+  </div>
+
+  <!-- ============ Lock layer ============ -->
+  <div id="lock" class="lock" hidden>
+    <button id="unlock" class="unlock" data-corner="br" type="button" aria-label="長押しでロック解除">
+      <svg class="unlock__ring" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="26"/><circle class="unlock__prog" cx="30" cy="30" r="26"/></svg>
+      <svg class="unlock__icon"><use href="#i-lock"/></svg>
+    </button>
+    <div id="lockMsg" class="lock__msg">
+      <svg><use href="#i-lock"/></svg>
+      <div><b>固定しました</b><small><span id="lockCornerTxt">右下</span>の鍵を長押しで解除</small></div>
+    </div>
+    <div id="lockTip" class="lock__tip"><svg><use href="#i-sun"/></svg>画面の明るさを最大にすると、線がよく透けます</div>
+  </div>
+
+  <!-- ============ Calibration ============ -->
+  <div id="calib" class="sheet" role="dialog" aria-modal="true" aria-labelledby="calibTitle" hidden>
+    <div class="sheet__card">
+      <button class="sheet__close" id="calibClose" type="button" aria-label="閉じる"><svg><use href="#i-close"/></svg></button>
+      <h2 id="calibTitle">画面の実寸を合わせる</h2>
+      <p class="sheet__lead">クレジットカードやポイントカード（85.6 × 54 mm）を画面に当てて、<b id="calibEdge">カードの幅</b>が枠とぴったり重なるように調整してください。</p>
+      <div class="card-wrap" id="cardWrap">
+        <div class="card" id="card"><span class="card__chip"></span><span class="card__lbl">CARD 85.6 × 54</span></div>
+      </div>
+      <div class="calib-ctrl">
+        <button class="round" id="calMinus" type="button" aria-label="小さく">−</button>
+        <input type="range" id="rCalib" min="2" max="12" step="0.01">
+        <button class="round" id="calPlus" type="button" aria-label="大きく">＋</button>
+      </div>
+      <p class="calib-val" id="calibVal">—</p>
+      <div class="sheet__actions">
+        <button class="btn btn--ghost" id="calibClear" type="button">校正を消す</button>
+        <button class="btn btn--primary" id="calibOk" type="button">この大きさで決定</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="dragOver" class="dragover" hidden><div><svg><use href="#i-image"/></svg>ここにドロップ</div></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
